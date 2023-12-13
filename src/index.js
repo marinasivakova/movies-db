@@ -4,7 +4,6 @@ import axios from "axios";
 import MoviesList from "./components/MoviesList";
 import Loader from "./components/Loader";
 import ErrorHandler from "./components/ErrorHandler";
-import OfflinePage from "./components/OfflinePage";
 
 const url =
   "/search/movie?query=return&include_adult=false&language=en-US&page=1";
@@ -67,13 +66,12 @@ class App extends Component {
 
   render() {
     const { isLoaded, moviesData, error, networkConnection } = this.state;
-    console.log(networkConnection)
-    if (networkConnection) {
-      if (error) {
-        return <ErrorHandler e={error} />;
-      } else if (!isLoaded) {
-        return <Loader />;
-      } else {
+    if (error) {
+      return <ErrorHandler e={error} />;
+    } else if (!isLoaded) {
+      return <Loader />;
+    } else {
+      if (networkConnection) {
         return (
           <div className="app">
             <MoviesList
@@ -82,9 +80,22 @@ class App extends Component {
             />
           </div>
         );
+      } else {
+        return (
+          <div className="app">
+            <ErrorHandler
+              e={{
+                code: "It seems you are currently experiencing network issues and is thus unable to connect to the Movies-DB app. Please try again later!",
+                message: "Network Error",
+              }}
+            />
+            <MoviesList
+              data={moviesData}
+              genres={JSON.parse(storage.getItem("genres"))}
+            />
+          </div>
+        );
       }
-    } else {
-      return <OfflinePage />;
     }
   }
 }
