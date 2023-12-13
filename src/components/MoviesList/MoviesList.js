@@ -16,9 +16,7 @@ export default class MoviesList extends Component {
       let genreNames = item.genre_ids.map((element) => {
         return genres.find((genre) => genre.id === element).name;
       });
-      return (<div key={id} className="film" onClick={openDesc}>
-        <Movie {...item} genreNames={genreNames}/>
-      </div>);
+      return (<Movie {...item} key={id} genreNames={genreNames} widenDesc={openDesc}/>);
     });
     return <div className="films">{films}</div>;
   }

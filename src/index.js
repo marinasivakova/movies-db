@@ -2,6 +2,9 @@ import React, { Component, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import axios from "axios";
 import MoviesList from "./components/MoviesList";
+import Loader from "./components/Loader";
+import ErrorHandler from "./components/ErrorHandler";
+import OfflinePage from "./components/OfflinePage";
 
 const url =
   "/search/movie?query=return&include_adult=false&language=en-US&page=1";
@@ -17,43 +20,71 @@ const client = axios.create({
 
 let storage = window.localStorage;
 if (!storage.getItem("genres")) {
-  client(genresUrl).then((res)=>{
-    console.log(res)
-    storage.setItem("genres", JSON.stringify(res.data.genres));
-    this.setState({
-      genres: JSON.parse(storage.getItem("genres")),
+  client(genresUrl)
+    .then((res) => {
+      storage.setItem("genres", JSON.stringify(res.data.genres));
+      if (this !== undefined) {
+        this.setState({
+          genres: JSON.parse(storage.getItem("genres")),
+        });
+      }
+    })
+    .catch((err) => {
+      this.setState({
+        error: err,
+      });
     });
-  });
 }
 
 class App extends Component {
   state = {
     isLoaded: false,
     moviesData: [],
+    networkConnection: true,
   };
 
   componentDidMount() {
-       client.get(url).then((res) => {
+    window.addEventListener("offline", () => {
+      this.setState({ networkConnection: false });
+    });
+    window.addEventListener("online", () => {
+      this.setState({ networkConnection: true });
+    });
+    client
+      .get(url)
+      .then((res) => {
         this.setState({
           isLoaded: true,
           moviesData: res.data.results,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          error: err,
         });
       });
   }
 
   render() {
-    const { isLoaded, moviesData } = this.state;
-    if (!isLoaded) {
-      return <div>Загрузка...</div>;
+    const { isLoaded, moviesData, error, networkConnection } = this.state;
+    console.log(networkConnection)
+    if (networkConnection) {
+      if (error) {
+        return <ErrorHandler e={error} />;
+      } else if (!isLoaded) {
+        return <Loader />;
+      } else {
+        return (
+          <div className="app">
+            <MoviesList
+              data={moviesData}
+              genres={JSON.parse(storage.getItem("genres"))}
+            />
+          </div>
+        );
+      }
     } else {
-      return (
-        <div className="app">
-          <MoviesList
-            data={moviesData}
-            genres={JSON.parse(storage.getItem("genres"))}
-          />
-        </div>
-      );
+      return <OfflinePage />;
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {format, parseISO} from 'date-fns';
 export default class Movie extends Component {
   render() {
@@ -7,11 +7,11 @@ export default class Movie extends Component {
       original_title: title,
       poster_path: posterUrl,
       release_date: releaseDate,
-      genreNames
+      genreNames, widenDesc
     } = this.props;
 
     let genreJSX  = genreNames.map((genre) => {
-      return (<div className="genres__genre">{genre}</div>)
+      return (<div className="genres__genre" key={genre}>{genre}</div>)
     })
 
     if (posterUrl) {
@@ -38,15 +38,15 @@ export default class Movie extends Component {
     }
 
     return (
-      <Fragment>
+      <div className="film" onClick={widenDesc}>
         <img src={posterUrl} alt="Poster for the movie" className="film__poster" />
         <div className="film__overview" onClick={openDesc}>
           <span className="film__title">{title}</span>
-          <span>{releaseDate}</span>
+          <span className="film__release">{releaseDate}</span>
           <div className="film__genres">{genreJSX}</div>
           <p className="film__description">{desc}</p>
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
