@@ -11,7 +11,6 @@ const ErrorHandler = ({e}) => (
       message= {e.message}
       description={e.code}
       type="error"
-      closable
     />
   </Space>)
 ;
