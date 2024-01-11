@@ -77,7 +77,8 @@ export default class Movie extends Component {
   };
 
   render() {
-    let { widenDesc, desc, title } = this.props;
+    let { widenDesc, title } = this.props;
+    let desc = this.props.overview;
     let rating = "0.0";
     let textDate;
     if (this.state.rating) {
