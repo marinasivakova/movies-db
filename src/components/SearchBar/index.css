@@ -1,0 +1,14 @@
+.search-bar__holder {
+    width: 100%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .search-bar {
+    margin: auto;
+    width: 60%;
+  }
+  
+  :where(.css-dev-only-do-not-override-p7e5j5).ant-select .ant-select-arrow {
+    display: none;
+  }

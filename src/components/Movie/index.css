@@ -1,0 +1,92 @@
+.film {
+  display: grid;
+  grid-template-areas:
+    "i o"
+    "i r";
+  width: fit-content;
+  height: fit-content;
+  box-shadow: 0px 4px 12px 0px #00000026;
+}
+
+.film__poster {
+  width: 183px;
+  height: 281px;
+  grid-area: i;
+}
+
+.film__overview {
+  padding: 15px;
+  display: grid;
+  grid-template-rows: min-content min-content min-content auto;
+  row-gap: 10px;
+  grid-area: o;
+}
+
+.film__stars {
+  grid-area: r;
+  margin: 0 auto;
+}
+
+.film__genres {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.genres__genre {
+  color: #000000a6;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+  padding: 3px;
+  background: #fafafa;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+}
+
+.film__rate-tab {
+  display: flex;
+  justify-content: space-between;
+}
+
+:where(.css-dev-only-do-not-override-p7e5j5).ant-rate .ant-rate-star:not(:last-child) {
+  margin-inline-end: 3px;
+}
+
+.film__title {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.film__rating {
+  position: relative;
+  top: -5px;
+  left: 5px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  padding: 10px;
+  border: 2px solid #000;
+  text-align: center;
+}
+
+.film__description {
+  display: inline-flex;
+  overflow: hidden;
+  cursor: pointer;
+  height: 60px;
+}
+
+.film__card {
+  height: 50vh;
+  width: 50vw;
+}
+
+@media only screen and (max-width: 500px) {
+    .film__poster {
+      margin: auto 0;
+      width: 122px;
+      height: 187px;
+    }
+  }

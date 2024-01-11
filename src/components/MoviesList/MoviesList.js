@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Movie from "../Movie/Movie";
+import Movie from "../Movie";
 export default class MoviesList extends Component {
   constructor(props) {
     super(props);

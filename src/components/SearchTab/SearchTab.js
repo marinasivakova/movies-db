@@ -1,44 +1,61 @@
 import { Component } from "react";
-import { Pagination} from "antd";
+import { Pagination } from "antd";
 
 import SearchBar from "../SearchBar";
 import MoviesList from "../MoviesList";
 import ErrorHandler from "../ErrorHandler";
+import getDataFromAPI from "../TMDB/TMDB";
 
 export default class SearchTab extends Component {
   state = {
-    page: this.props.page,
     moviesData: this.props.moviesData,
-    networkConnection: this.props.networkConnection
-  }
+    networkConnection: this.props.networkConnection,
+    inputValue: "query=return",
+  };
 
-  updateData = (searchInput) => {
-    if (searchInput.length === 0) {
-      this.setState({
-        error: {
-          message: "No results",
-          code: "Your search query returned no results :(",
-        },
-      });
+  updateData = (page, inputValue) => {
+    if (!inputValue) {
+      inputValue = this.state.inputValue;
     } else {
       this.setState({
-        error: null,
+        inputValue: inputValue,
       });
     }
-    if (searchInput !== this.state.moviesData) {
-      this.setState({
-        moviesData: searchInput,
-      });
-    }
+    this.setState({
+      page: page,
+    });
+    let result;
+
+    getDataFromAPI("search", page, inputValue).then((d) => {
+      result = d;
+      if (result.length === 0) {
+        this.setState({
+          error: {
+            message: "No results",
+            code: "Your search query returned no results :(",
+          },
+        });
+      } else {
+        this.setState({
+          error: null,
+        });
+      }
+      if (result !== this.state.moviesData) {
+        this.setState({
+          moviesData: result,
+        });
+      }
+    });
   };
 
   render() {
-    let {page, moviesData, networkConnection, error} = this.state;
+    let { page, moviesData, networkConnection, error } = this.state;
     let { changePage, ratedData } = this.props;
     if (error) {
       return (
         <div className="app">
           <SearchBar
+            page={page}
             placeholder="Input movie name"
             style={{
               margin: "auto",
@@ -70,6 +87,7 @@ export default class SearchTab extends Component {
     return (
       <div className="search-tab">
         <SearchBar
+          page={page}
           placeholder="Input movie name"
           style={{
             margin: "auto",
@@ -77,14 +95,14 @@ export default class SearchTab extends Component {
           }}
           onSearch={this.updateData}
         />
-        <MoviesList
-          data={moviesData}
-          ratedData={ratedData}
-        />
+        <MoviesList data={moviesData} ratedData={ratedData} />
         <Pagination
           className="pagination"
-          onChange={(e)=> {changePage(e)}}
-          defaultCurrent={page}
+          onChange={(e) => {
+            changePage(e);
+            this.updateData(e);
+          }}
+          current={page}
           total={50}
         />
       </div>

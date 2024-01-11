@@ -4,12 +4,12 @@ import { Pagination } from "antd";
 import MoviesList from "../MoviesList";
 import ErrorHandler from "../ErrorHandler";
 import Loader from "../Loader";
+import getDataFromAPI from "../TMDB/TMDB";
 
 export default class RatedTab extends Component {
   state = {
-    page: 1
-  }
-
+    data: this.props.moviesData,
+  };
   changePage = (current) => {
     if (current !== this.state.page) {
       this.setState({
@@ -17,10 +17,32 @@ export default class RatedTab extends Component {
       });
     }
   };
+
+  updateData = (page) => {
+    let result;
+    getDataFromAPI("rated", page).then((d) => {
+      result = d;
+      if (result.length === 0) {
+        this.setState({
+          error: {
+            message: "No results",
+            code: "Final rating page",
+          },
+        });
+      } else {
+        this.setState({
+          error: null,
+        });
+      }
+      this.setState({
+        data: result,
+      });
+    });
+  };
+
   render() {
-    let {moviesData, networkConnection, changePage } = this.props;
-    let {page}= this.state.page;
-    if (!moviesData) {
+    let { networkConnection, changePage, page } = this.props;
+    while (!this.state.data) {
       return <Loader />;
     }
     if (!networkConnection) {
@@ -34,22 +56,23 @@ export default class RatedTab extends Component {
           />
           <MoviesList
             key={Math.random()}
-            data={moviesData}
-            ratedData={moviesData}
+            data={this.state.data}
+            ratedData={this.state.data}
           />
         </div>
       );
     }
     return (
       <div className="search-tab">
-        <MoviesList
-          data={moviesData}
-          ratedData={moviesData}
-        />
+        <MoviesList data={this.state.data} ratedData={this.state.data} />
         <Pagination
           className="pagination"
           defaultCurrent={page}
-          onChange={(e)=> {changePage(e)}}
+          onChange={(e) => {
+            changePage(e);
+            this.updateData(e);
+          }}
+          total={50}
         />
       </div>
     );
