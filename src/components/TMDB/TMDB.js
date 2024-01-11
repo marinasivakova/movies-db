@@ -10,6 +10,17 @@ const getDataFromAPI = (tab, page, inputValue) => {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NjlhOWQyMTM5NGFkNzgxZmYxMzk3Yzk2MThkNzAzMyIsInN1YiI6IjY1NzZmMjlhYTFkMzMyMDBjNGM3NmFmYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RnzdPYPaFX6GCcfrnEdTUS6hwRAJlMlotnBY6VCkfr4",
     },
   });
+  if (!document.cookie) {
+    return client.get("authentication/guest_session/new").then((res) => {
+      document.cookie =
+        `guest_session_id=` +
+        res.data.guest_session_id +
+        `; expires=` +
+        res.data.expires_at;
+    }).catch((err)=>{
+      console.log(err)
+    });
+  }
   let session = document.cookie.match(/=(.*)/gm).map(function (s) {
     return s.slice(1);
   });
@@ -45,17 +56,6 @@ const getDataFromAPI = (tab, page, inputValue) => {
         console.log(err)
       })
   } else {
-    if (!document.cookie) {
-      return client.get("authentication/guest_session/new").then((res) => {
-        document.cookie =
-          `guest_session_id=` +
-          res.data.guest_session_id +
-          `; expires=` +
-          res.data.expires_at;
-      }).catch((err)=>{
-        console.log(err)
-      });
-    }
     if (inputValue) {
       return client
         .get(
