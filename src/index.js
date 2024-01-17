@@ -99,18 +99,22 @@ class App extends Component {
     if (!isLoaded) {
       return <Loader />;
     } else {
-       return <ContextGenres.Provider value={genres}>
-          <DefaultTab
-            tab={tab}
-            page={page}
-            moviesData={moviesData}
-            networkConnection={networkConnection}
-            changePage={changePage}
-            ratedData={ratedData}
-            ratedPage={ratedPage}
-            switchTab={this.switchTab}
-          />
-        </ContextGenres.Provider>;
+      if (moviesData && genres) {
+        return (
+          <ContextGenres.Provider value={genres}>
+            <DefaultTab
+              tab={tab}
+              page={page}
+              moviesData={moviesData}
+              networkConnection={networkConnection}
+              changePage={changePage}
+              ratedData={ratedData}
+              ratedPage={ratedPage}
+              switchTab={this.switchTab}
+            />
+          </ContextGenres.Provider>
+        );
+      }
     }
   }
 }
