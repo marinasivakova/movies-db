@@ -1,17 +1,13 @@
 .film {
   display: grid;
-  grid-template-areas:
-    "i o"
-    "i r";
-  width: fit-content;
-  height: fit-content;
+  grid-template-columns: 1fr 2fr;
   box-shadow: 0px 4px 12px 0px #00000026;
 }
 
 .film__poster {
   width: 183px;
   height: 281px;
-  grid-area: i;
+  margin: auto 0;
 }
 
 .film__overview {
@@ -19,12 +15,13 @@
   display: grid;
   grid-template-rows: min-content min-content min-content auto;
   row-gap: 10px;
-  grid-area: o;
 }
 
 .film__stars {
-  grid-area: r;
-  margin: 0 auto;
+  margin: 0 auto 10px auto;
+  display: flex;
+  align-items: flex-end;
+  width: fit-content;
 }
 
 .film__genres {
@@ -48,6 +45,7 @@
 .film__rate-tab {
   display: flex;
   justify-content: space-between;
+  align-items: end;
 }
 
 :where(.css-dev-only-do-not-override-p7e5j5).ant-rate .ant-rate-star:not(:last-child) {
@@ -67,8 +65,25 @@
   width: 20px;
   height: 20px;
   padding: 10px;
-  border: 2px solid #000;
   text-align: center;
+}
+
+.film__rating--bad {
+  border: 2px solid #E90000;
+}
+
+.film__rating--mid {
+  border: 2px solid #E97E00;
+}
+
+.film__rating--good {
+  border: 2px solid #E9D100;
+
+}
+
+.film__rating--great {
+  border: 2px solid #66E900;
+
 }
 
 .film__description {
@@ -78,15 +93,26 @@
   height: 60px;
 }
 
+.film__description__extended {
+  display: inline-flex;
+  cursor: pointer;
+  height: initial;
+  overflow: initial;
+}
+
 .film__card {
   height: 50vh;
   width: 50vw;
 }
 
 @media only screen and (max-width: 500px) {
-    .film__poster {
-      margin: auto 0;
-      width: 122px;
-      height: 187px;
-    }
+  .film__poster {
+    margin: auto 0;
+    width: 122px;
+    height: 187px;
   }
+
+  .film__description {
+    height: 44px;
+  }
+}

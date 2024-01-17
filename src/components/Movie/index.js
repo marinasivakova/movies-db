@@ -1,4 +1,4 @@
 import Movie from "./Movie";
-import './index.css';
+import './Movie.css';
 
 export default Movie;

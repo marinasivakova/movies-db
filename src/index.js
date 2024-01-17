@@ -1,10 +1,8 @@
 import React, { Component, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import Loader from "./components/Loader";
-import SearchTab from "./components/SearchTab/SearchTab";
-import RatedTab from "./components/RatedTab/RatedTab";
-import TabPicker from "./components/TabPicker/TabPicker";
-import getDataFromAPI from "./components/TMDB/TMDB";
+import getDataFromAPI from "./client/TMDB";
+import DefaultTab from "./components/DefaultTab.js/DefaultTab";
 
 export const ContextGenres = React.createContext([]);
 if (!document.cookie) {
@@ -28,11 +26,9 @@ class App extends Component {
       this.setState({ networkConnection: true });
     });
     if (!this.state.ratedData) {
-      let result;
       getDataFromAPI("rated", this.state.page).then((d) => {
-        result = d;
         this.setState({
-          ratedData: result,
+          ratedData: d,
         });
       });
     }
@@ -40,22 +36,18 @@ class App extends Component {
       this.setState({
         isLoaded: false,
       });
-      let result;
       getDataFromAPI("search", this.state.page, "query=return").then((d) => {
-        result = d;
         this.setState({
           isLoaded: true,
-          moviesData: result,
+          moviesData: d,
         });
       });
     }
     if (!this.state.genres) {
-      let result;
       getDataFromAPI("genres").then((d) => {
-        result = d;
         this.setState({
           isLoaded: true,
-          genres: result,
+          genres: d,
         });
       });
     }
@@ -64,11 +56,9 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.tab !== this.state.tab) {
       if (this.state.tab === "Rated") {
-        let result;
         getDataFromAPI("rated", this.state.ratedPage).then((d) => {
-          result = d;
           this.setState({
-            ratedData: result,
+            ratedData: d,
           });
         });
       }
@@ -109,34 +99,18 @@ class App extends Component {
     if (!isLoaded) {
       return <Loader />;
     } else {
-      if (genres && moviesData) {
-        if (tab === "Search") {
-          return (
-            <ContextGenres.Provider value={genres}>
-              <TabPicker onPress={this.switchTab} />
-              <SearchTab
-                page={page}
-                moviesData={moviesData}
-                networkConnection={networkConnection}
-                changePage={changePage}
-                ratedData={ratedData}
-              />
-            </ContextGenres.Provider>
-          );
-        } else if (tab === "Rated") {
-          return (
-            <ContextGenres.Provider value={genres}>
-              <TabPicker onPress={this.switchTab} />
-              <RatedTab
-                page={ratedPage}
-                moviesData={ratedData}
-                networkConnection={networkConnection}
-                changePage={changePage}
-              />
-            </ContextGenres.Provider>
-          );
-        }
-      }
+       return <ContextGenres.Provider value={genres}>
+          <DefaultTab
+            tab={tab}
+            page={page}
+            moviesData={moviesData}
+            networkConnection={networkConnection}
+            changePage={changePage}
+            ratedData={ratedData}
+            ratedPage={ratedPage}
+            switchTab={this.switchTab}
+          />
+        </ContextGenres.Provider>;
     }
   }
 }

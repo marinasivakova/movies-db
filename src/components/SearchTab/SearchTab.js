@@ -4,7 +4,7 @@ import { Pagination } from "antd";
 import SearchBar from "../SearchBar";
 import MoviesList from "../MoviesList";
 import ErrorHandler from "../ErrorHandler";
-import getDataFromAPI from "../TMDB/TMDB";
+import getDataFromAPI from "../../client/TMDB";
 
 export default class SearchTab extends Component {
   state = {
@@ -89,10 +89,6 @@ export default class SearchTab extends Component {
         <SearchBar
           page={page}
           placeholder="Input movie name"
-          style={{
-            margin: "auto",
-            width: 1000,
-          }}
           onSearch={this.updateData}
         />
         <MoviesList data={moviesData} ratedData={ratedData} />

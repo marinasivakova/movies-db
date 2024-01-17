@@ -4,7 +4,7 @@ import { Pagination } from "antd";
 import MoviesList from "../MoviesList";
 import ErrorHandler from "../ErrorHandler";
 import Loader from "../Loader";
-import getDataFromAPI from "../TMDB/TMDB";
+import getDataFromAPI from "../../client/TMDB";
 
 export default class RatedTab extends Component {
   state = {

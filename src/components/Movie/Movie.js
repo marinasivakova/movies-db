@@ -3,8 +3,12 @@ import { format, parseISO } from "date-fns";
 import { Rate } from "antd";
 
 import { ContextGenres } from "../..";
-import getDataFromAPI from "../TMDB/TMDB";
+import getDataFromAPI from "../../client/TMDB";
 export default class Movie extends Component {
+  constructor(props) {
+    super(props);
+    this.myRating = React.createRef();
+  }
   state = {};
   componentDidMount() {
     if (this.props.rating) {
@@ -48,12 +52,16 @@ export default class Movie extends Component {
   };
 
   openDesc = (e) => {
-    if (e.target.style.overflow === "hidden" || !e.target.style.overflow) {
-      e.target.style.overflow = "initial";
-      e.target.style.height = "initial";
+    if (e.target.classList[0] === "film__description") {
+      e.target.classList.add("film__description__extended");
+      e.target.classList.remove("film__description");
+      if (e.target.offsetHeight < 40) {
+        e.target.classList.remove("film__description__extended");
+        e.target.classList.add("film__description");
+      }
     } else {
-      e.target.style.overflow = "hidden";
-      e.target.style.height = "60px";
+      e.target.classList.remove("film__description__extended");
+      e.target.classList.add("film__description");
     }
   };
 
@@ -62,27 +70,38 @@ export default class Movie extends Component {
     this.setState({
       rating: e,
     });
+    this.changeStyle(e);
   };
 
   changeStyle = (rating) => {
+    if (!this.myRating.current) {
+      return;
+    }
+    this.myRating.current.classList.remove("film__rating--bad");
+    this.myRating.current.classList.remove("film__rating--mid");
+    this.myRating.current.classList.remove("film__rating--good");
+    this.myRating.current.classList.remove("film__rating--great");
     if (rating < 3) {
-      return "#E90000";
+      this.myRating.current.classList.add("film__rating--bad");
     } else if (rating <= 5) {
-      return "#E97E00";
+      this.myRating.current.classList.add("film__rating--mid");
     } else if (rating <= 7) {
-      return "#E9D100";
+      this.myRating.current.classList.add("film__rating--good");
     } else {
-      return "#66E900";
+      this.myRating.current.classList.add("film__rating--great");
     }
   };
 
   render() {
-    let { widenDesc, title } = this.props;
+    let { title } = this.props;
     let desc = this.props.overview;
     let rating = "0.0";
     let textDate;
     if (this.state.rating) {
       rating = this.state.rating;
+    }
+    if (rating) {
+      this.changeStyle(rating);
     }
     if (!desc) {
       desc = "No description was provided";
@@ -96,37 +115,31 @@ export default class Movie extends Component {
     let genreJSX = this.getGenres();
     let poster = this.getPoster();
 
-
     return (
-      <div className="film" onClick={widenDesc}>
-        <img
-          src={poster}
-          alt="Poster for the movie"
-          className="film__poster"
-        />
-        <div className="film__overview">
-          <div className="film__rate-tab">
-            <span className="film__title">{title}</span>
-            <span
-              className="film__rating"
-              style={{ border: `2px solid ${this.changeStyle(rating)}` }}
-            >
-              {rating}
-            </span>
+      <div className="film">
+        <img src={poster} alt="Poster for the movie" className="film__poster" />
+        <div>
+          <div className="film__overview">
+            <div className="film__rate-tab">
+              <h2 className="film__title">{title}</h2>
+              <span className="film__rating" ref={this.myRating}>
+                {rating}
+              </span>
+            </div>
+            <span className="film__release">{textDate}</span>
+            <div className="film__genres">{genreJSX}</div>
+            <p className="film__description" onClick={this.openDesc}>
+              {desc}
+            </p>
           </div>
-          <span className="film__release">{textDate}</span>
-          <div className="film__genres">{genreJSX}</div>
-          <p className="film__description" onClick={this.openDesc}>
-            {desc}
-          </p>
+          <Rate
+            className="film__stars"
+            value={rating}
+            count={10}
+            allowHalf={true}
+            onChange={this.handleChange}
+          />
         </div>
-        <Rate
-          className="film__stars"
-          value={rating}
-          count={10}
-          allowHalf={true}
-          onChange={this.handleChange}
-        />
       </div>
     );
   }

@@ -15,19 +15,6 @@ export default class MoviesList extends Component {
   }
 
   render() {
-    const openDesc = (e) => {
-      if (e.target.className !== 'film__description') {
-        return null;
-      }
-      if (
-        e.currentTarget.style.height === "279px" ||
-        !e.currentTarget.style.height
-      ) {
-        e.currentTarget.style.height = "fit-content";
-      } else {
-        e.currentTarget.style.height = "279px";
-      }
-    };
     const { data } = this.state;
     let films;
     if (Object.keys(data).length === 0) {
@@ -50,7 +37,6 @@ export default class MoviesList extends Component {
           <Movie
             {...item}
             key={id}
-            widenDesc={openDesc}
             rating={ratingValue}
           />
         );
